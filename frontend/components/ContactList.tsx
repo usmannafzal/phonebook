@@ -4,11 +4,43 @@ import { formatPhone } from "@/utils/phone";
 
 type Props = {
   contacts: Contact[];
+  loading: boolean;
+  error: string;
+  onRetry: () => void;
   onEdit: (contact: Contact) => void;
   onDelete: (id: number) => void;
 };
 
-export default function ContactList({ contacts, onEdit, onDelete }: Props) {
+export default function ContactList({
+  contacts,
+  loading,
+  error,
+  onRetry,
+  onEdit,
+  onDelete,
+}: Props) {
+  if (error) {
+    return (
+      <div className="bg-white border border-[#ebebeb] rounded-[3px] py-6 text-center text-sm">
+        <p className="text-[#bc4e4e]">Could not load contacts: {error}</p>
+        <button
+          onClick={onRetry}
+          className="mt-3 px-4 h-7 text-xs text-white bg-[#4779ee] rounded-[3px]"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (loading && contacts.length === 0) {
+    return (
+      <div className="bg-white border border-[#ebebeb] rounded-[3px] py-6 text-center text-sm text-[#a6a6a6]">
+        Loading contacts...
+      </div>
+    );
+  }
+
   if (contacts.length === 0) {
     return (
       <div className="bg-white border border-[#ebebeb] rounded-[3px] py-6 text-center text-sm text-[#a6a6a6]">

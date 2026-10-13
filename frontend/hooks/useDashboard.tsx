@@ -11,9 +11,21 @@ export default function useDashBoard() {
     page: 1,
     showModal: false,
     editingContact: null as Contact | null,
+    loading: true,
+    error: '',
+    reload: 0,
   });
-  const { contacts, totalPages, search, page, showModal, editingContact } =
-    state;
+  const {
+    contacts,
+    totalPages,
+    search,
+    page,
+    showModal,
+    editingContact,
+    loading,
+    error,
+    reload,
+  } = state;
 
   function showError(error: unknown) {
     if (error instanceof Error) alert(error.message);
@@ -78,6 +90,12 @@ export default function useDashBoard() {
     }
   }
 
+  function retry() {
+    setState((draft) => {
+      draft.reload += 1;
+    });
+  }
+
   function setPage(p: number) {
     setState((draft) => {
       draft.page = p;
@@ -86,15 +104,29 @@ export default function useDashBoard() {
 
   useEffect(() => {
     async function fetchContacts() {
-      const res = await API.getContacts(page, search);
       setState((draft) => {
-        draft.contacts = res.data.data;
-        draft.totalPages = res.data.pagination.totalPages;
+        draft.loading = true;
+        draft.error = '';
       });
+
+      try {
+        const res = await API.getContacts(page, search);
+        setState((draft) => {
+          draft.contacts = res.data.data;
+          draft.totalPages = res.data.pagination.totalPages;
+          draft.loading = false;
+        });
+      } catch (error) {
+        setState((draft) => {
+          draft.error =
+            error instanceof Error ? error.message : 'Something went wrong';
+          draft.loading = false;
+        });
+      }
     }
 
     fetchContacts();
-  }, [page, search, setState]);
+  }, [page, search, reload, setState]);
 
   return {
     contacts,
@@ -103,6 +135,9 @@ export default function useDashBoard() {
     showModal,
     editingContact,
     totalPages,
+    loading,
+    error,
+    retry,
     setState,
     openAdd,
     handleSave,

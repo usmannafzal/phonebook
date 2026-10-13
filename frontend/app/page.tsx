@@ -14,6 +14,9 @@ export default function Home() {
     showModal,
     editingContact,
     totalPages,
+    loading,
+    error,
+    retry,
     openAdd,
     handleSave,
     handleDelete,
@@ -30,7 +33,12 @@ export default function Home() {
       </div>
 
       <div className="flex items-center justify-between mb-3.5">
-        <h2 className="text-lg">Contacts</h2>
+        <h2 className="text-lg">
+          Contacts
+          {loading && contacts.length > 0 && (
+            <span className="ml-2 text-xs text-[#a6a6a6]">Loading...</span>
+          )}
+        </h2>
         <button
           onClick={openAdd}
           className="w-[100px] h-[26px] text-[11px] text-white bg-[#4779ee] rounded-[3px]"
@@ -56,6 +64,9 @@ export default function Home() {
 
       <ContactList
         contacts={contacts}
+        loading={loading}
+        error={error}
+        onRetry={retry}
         onEdit={openEdit}
         onDelete={handleDelete}
       />
