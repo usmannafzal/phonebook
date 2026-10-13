@@ -11,5 +11,5 @@ export const getDatabaseConfig = (
   password: config.get<string>('DB_PASSWORD', ''),
   database: config.get<string>('DB_DATABASE', 'phonebook_usman_afzal'),
   autoLoadEntities: true,
-  synchronize: true,
+  synchronize: false,
 });

@@ -31,6 +31,26 @@
 $ yarn install
 ```
 
+## Database setup
+
+Requires a running PostgreSQL server. Copy `.env.example` to `.env` and fill in the values (at least `DB_PASSWORD`), then run `yarn db:setup`, which also creates the database named in `DB_DATABASE` if it doesn't exist.
+
+The schema is managed by migrations (`synchronize` is off).
+
+```bash
+# create the database, tables and demo contacts in one go
+$ yarn db:setup
+
+# or step by step
+$ yarn db:create        # create the database if missing
+$ yarn migration:run     # apply pending migrations
+$ yarn seed              # insert demo contacts (safe to re-run)
+$ yarn migration:show    # list applied / pending migrations
+$ yarn migration:revert  # undo the last migration
+```
+
+These commands build the project first, because the TypeORM CLI runs against `dist/`. To add a migration, create a file in `src/database/migrations/` named `<timestamp>-<Name>.ts`.
+
 ## Compile and run the project
 
 ```bash
