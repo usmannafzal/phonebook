@@ -1,7 +1,16 @@
-import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('contacts')
 export class Contact {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({ type: 'varchar', name: 'first_name', length: 50 })
   firstName: string;
 
