@@ -10,6 +10,7 @@ import { Contact } from './contacts/entities/contact.entity.js';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
