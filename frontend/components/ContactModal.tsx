@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useImmer } from "use-immer";
 import { Contact } from "@/data/contacts";
 
 const inputClass = "w-full h-8 px-2 text-sm bg-white border border-[#e0e2e5] rounded-[3px] outline-none";
@@ -12,13 +12,15 @@ type Props = {
 };
 
 export default function ContactModal({ contact, onSave, onClose }: Props) {
-  const [firstName, setFirstName] = useState(contact?.firstName || "");
-  const [lastName, setLastName] = useState(contact?.lastName || "");
-  const [phone, setPhone] = useState(contact?.phone || "");
+  const [form, setForm] = useImmer({
+    firstName: contact?.firstName || "",
+    lastName: contact?.lastName || "",
+    phone: contact?.phone || "",
+  });
 
   function handleSubmit(e: any) {
     e.preventDefault();
-    onSave({ id: contact?.id || 0, firstName, lastName, phone });
+    onSave({ id: contact?.id || 0, ...form });
   }
 
   return (
@@ -27,16 +29,16 @@ export default function ContactModal({ contact, onSave, onClose }: Props) {
         <h2 className="text-lg mb-4">{contact ? "Edit Contact" : "Add Contact"}</h2>
 
         <label className="block text-xs mb-1">First Name</label>
-        <input className={`${inputClass} mb-3`} value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+        <input className={`${inputClass} mb-3`} value={form.firstName} onChange={(e) => setForm((draft) => { draft.firstName = e.target.value; })} required />
 
         <label className="block text-xs mb-1">Last Name</label>
-        <input className={`${inputClass} mb-3`} value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+        <input className={`${inputClass} mb-3`} value={form.lastName} onChange={(e) => setForm((draft) => { draft.lastName = e.target.value; })} required />
 
         <label className="block text-xs mb-1">Phone Number</label>
         <input
           className={`${inputClass} mb-5`}
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          value={form.phone}
+          onChange={(e) => setForm((draft) => { draft.phone = e.target.value; })}
           placeholder="222-555-6575"
           required
         />

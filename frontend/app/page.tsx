@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useImmer } from "use-immer";
 import ContactList from "@/components/ContactList";
 import ContactModal from "@/components/ContactModal";
 import Pagination from "@/components/Pagination";
@@ -10,38 +10,53 @@ import { Contact, dummyContacts } from "@/data/contacts";
 const PER_PAGE = 5;
 
 export default function Home() {
-  const [contacts, setContacts] = useState(dummyContacts);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [showModal, setShowModal] = useState(false);
-  const [editingContact, setEditingContact] = useState<Contact | null>(null);
+  const [state, setState] = useImmer({
+    contacts: dummyContacts,
+    search: "",
+    page: 1,
+    showModal: false,
+    editingContact: null as Contact | null,
+  });
+  const { contacts, search, page, showModal, editingContact } = state;
 
   const filtered = contacts.filter((c) => c.lastName.toLowerCase().includes(search.toLowerCase()));
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const visible = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   function openAdd() {
-    setEditingContact(null);
-    setShowModal(true);
+    setState((draft) => {
+      draft.editingContact = null;
+      draft.showModal = true;
+    });
   }
 
   function openEdit(contact: Contact) {
-    setEditingContact(contact);
-    setShowModal(true);
+    setState((draft) => {
+      draft.editingContact = contact;
+      draft.showModal = true;
+    });
   }
 
   function handleSave(contact: Contact) {
-    if (contact.id) 
-      setContacts(contacts.map((c) => (c.id === contact.id ? contact : c)));
-     else 
-      setContacts([...contacts, { ...contact, id: Date.now() }]);
-    
-    setShowModal(false);
+    setState((draft) => {
+      const existing = contact.id ? draft.contacts.find((c) => c.id === contact.id) : null;
+      if (existing) Object.assign(existing, contact);
+      else draft.contacts.push({ ...contact, id: Date.now() });
+      draft.showModal = false;
+    });
   }
 
   function handleDelete(id: number) {
-    setContacts(contacts.filter((c) => c.id !== id));
-    if (visible.length === 1 && page > 1) setPage(page - 1);
+    setState((draft) => {
+      draft.contacts = draft.contacts.filter((c) => c.id !== id);
+      if (visible.length === 1 && draft.page > 1) draft.page -= 1;
+    });
+  }
+
+  function setPage(p: number) {
+    setState((draft) => {
+      draft.page = p;
+    });
   }
 
   return (
@@ -65,8 +80,10 @@ export default function Home() {
           placeholder="Search for contact by last name..."
           value={search}
           onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
+            setState((draft) => {
+              draft.search = e.target.value;
+              draft.page = 1;
+            });
           }}
         />
       </div>
@@ -75,7 +92,7 @@ export default function Home() {
       <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
       {showModal && (
-        <ContactModal contact={editingContact} onSave={handleSave} onClose={() => setShowModal(false)} />
+        <ContactModal contact={editingContact} onSave={handleSave} onClose={() => setState((draft) => { draft.showModal = false; })} />
       )}
     </main>
   );
