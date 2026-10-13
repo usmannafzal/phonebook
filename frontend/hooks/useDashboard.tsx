@@ -1,23 +1,31 @@
-import { Contact, dummyContacts } from '@/data/contacts';
+import { useCallback, useEffect } from 'react';
 import { useImmer } from 'use-immer';
-
-const PER_PAGE = 5;
+import { API } from '@/app/api/api';
+import { Contact } from '@/data/contacts';
 
 export default function useDashBoard() {
   const [state, setState] = useImmer({
-    contacts: dummyContacts,
+    contacts: [] as Contact[],
+    totalPages: 0,
     search: '',
     page: 1,
     showModal: false,
     editingContact: null as Contact | null,
   });
-  const { contacts, search, page, showModal, editingContact } = state;
+  const { contacts, totalPages, search, page, showModal, editingContact } =
+    state;
 
-  const filtered = contacts.filter((c) =>
-    c.lastName.toLowerCase().includes(search.toLowerCase()),
-  );
-  const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const visible = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const fetchContacts = async () => {
+    const res = await API.getContacts(page, search);
+    setState((draft) => {
+      draft.contacts = res.data.data;
+      draft.totalPages = res.data.pagination.totalPages;
+    });
+  };
+
+  function showError(error: unknown) {
+    if (error instanceof Error) alert(error.message);
+  }
 
   function openAdd() {
     setState((draft) => {
@@ -33,22 +41,49 @@ export default function useDashBoard() {
     });
   }
 
-  function handleSave(contact: Contact) {
+  async function handleSave({ id, ...data }: Contact) {
+    const previous = contacts;
+    const tempId = -Date.now();
+
     setState((draft) => {
-      const existing = contact.id
-        ? draft.contacts.find((c) => c.id === contact.id)
-        : null;
-      if (existing) Object.assign(existing, contact);
-      else draft.contacts.push({ ...contact, id: Date.now() });
       draft.showModal = false;
+      const existing = draft.contacts.find((c) => c.id === id);
+      if (existing) Object.assign(existing, data);
+      else draft.contacts.push({ id: tempId, ...data });
     });
+
+    try {
+      const res = id
+        ? await API.updateContact(id, data)
+        : await API.createContact(data);
+      setState((draft) => {
+        const index = draft.contacts.findIndex((c) => c.id === (id || tempId));
+        draft.contacts[index] = res.data;
+      });
+    } catch (error) {
+      setState((draft) => {
+        draft.contacts = previous;
+      });
+      showError(error);
+    }
   }
 
-  function handleDelete(id: number) {
+  async function handleDelete(id: number) {
+    const previous = contacts;
+
     setState((draft) => {
       draft.contacts = draft.contacts.filter((c) => c.id !== id);
-      if (visible.length === 1 && draft.page > 1) draft.page -= 1;
     });
+
+    try {
+      await API.deleteContact(id);
+      if (previous.length === 1 && page > 1) setPage(page - 1);
+    } catch (error) {
+      setState((draft) => {
+        draft.contacts = previous;
+      });
+      showError(error);
+    }
   }
 
   function setPage(p: number) {
@@ -56,6 +91,10 @@ export default function useDashBoard() {
       draft.page = p;
     });
   }
+
+  useEffect(() => {
+    fetchContacts();
+  }, [fetchContacts]);
 
   return {
     contacts,
@@ -70,6 +109,5 @@ export default function useDashBoard() {
     handleDelete,
     setPage,
     openEdit,
-    visible,
   };
 }
