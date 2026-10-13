@@ -30,7 +30,7 @@ export class ContactsService {
 
   async getAll(query: GetAllContactsDto) {
     const { page, lastName } = query;
-    const limit = 10;
+    const limit = 5;
 
     const search = lastName?.trim();
     const where = search ? { lastName: ILike(`%${search}%`) } : {};
