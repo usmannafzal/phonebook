@@ -8,6 +8,7 @@ export default function useDashBoard() {
     contacts: [] as Contact[],
     totalPages: 0,
     search: '',
+    query: '',
     page: 1,
     showModal: false,
     editingContact: null as Contact | null,
@@ -19,6 +20,7 @@ export default function useDashBoard() {
     contacts,
     totalPages,
     search,
+    query,
     page,
     showModal,
     editingContact,
@@ -103,6 +105,17 @@ export default function useDashBoard() {
   }
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setState((draft) => {
+        draft.query = search;
+        draft.page = 1;
+      });
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search, setState]);
+
+  useEffect(() => {
     async function fetchContacts() {
       setState((draft) => {
         draft.loading = true;
@@ -110,7 +123,7 @@ export default function useDashBoard() {
       });
 
       try {
-        const res = await API.getContacts(page, search);
+        const res = await API.getContacts(page, query);
         setState((draft) => {
           draft.contacts = res.data.data;
           draft.totalPages = res.data.pagination.totalPages;
@@ -126,7 +139,7 @@ export default function useDashBoard() {
     }
 
     fetchContacts();
-  }, [page, search, reload, setState]);
+  }, [page, query, reload, setState]);
 
   return {
     contacts,

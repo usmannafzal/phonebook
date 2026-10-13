@@ -56,7 +56,6 @@ export default function Home() {
           onChange={(e) => {
             setState((draft) => {
               draft.search = e.target.value;
-              draft.page = 1;
             });
           }}
         />
