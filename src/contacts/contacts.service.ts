@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from './entities/contact.entity.js';
 import { Repository } from 'typeorm';
@@ -18,7 +22,7 @@ export class ContactsService {
   async findById(id: number) {
     const contact = await this.repo.findOneBy({ id });
     if (!contact)
-      throw new BadRequestException({
+      throw new NotFoundException({
         message: "the contact with the given id doesn't exist",
       });
     return contact;
