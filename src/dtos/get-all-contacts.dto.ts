@@ -1,9 +1,12 @@
-import { IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class GetAllContactsDto {
-  @IsString()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   @IsOptional()
-  page?: string;
+  page?: number;
 
   @IsString()
   @IsOptional()

@@ -37,9 +37,9 @@ export class ContactsService {
       ? { lastName: ILike(`%${search.replace(/[\\%_]/g, '\\$&')}%`) }
       : undefined;
 
-    if (!page) return this.repo.find({ where });
+    if (page === undefined) return this.repo.find({ where });
 
-    const pageNumber = Math.max(1, Number(page));
+    const pageNumber = page;
     const pageSize = Math.min(100, Math.max(1, Number(limit) || 10));
 
     const [contacts, total] = await this.repo.findAndCount({
