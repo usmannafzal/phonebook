@@ -29,32 +29,27 @@ export class ContactsService {
   }
 
   async getAll(query: GetAllContactsDto) {
-    const limit = 10;
     const { page, lastName } = query;
+    const limit = 10;
 
-    const search = lastName?.trim();
-    const where = search
-      ? { lastName: ILike(`%${search.replace(/[\\%_]/g, '\\$&')}%`) }
-      : undefined;
+    const search = lastName?.trim().replace(/[\\%_]/g, '\\$&');
+    const where = search ? { lastName: ILike(`%${search}%`) } : {};
 
-    if (page === undefined) return this.repo.find({ where });
-
-    const pageNumber = page;
-    const pageSize = Math.min(100, Math.max(1, Number(limit) || 10));
+    if (!page) return this.repo.find({ where });
 
     const [contacts, total] = await this.repo.findAndCount({
       where,
-      skip: (pageNumber - 1) * pageSize,
-      take: pageSize,
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
     return {
       data: contacts,
       pagination: {
         total,
-        page: pageNumber,
-        limit: pageSize,
-        totalPages: Math.ceil(total / pageSize),
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
     };
   }
