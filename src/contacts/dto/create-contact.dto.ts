@@ -10,7 +10,7 @@ import {
   normalizePhone,
   PHONE_MESSAGE,
   PHONE_REGEX,
-} from '../contacts/phone.js';
+} from '../phone.js';
 
 export class CreateContactDto {
   @IsString({ message: 'First name must be a string' })

@@ -11,9 +11,9 @@ import {
 } from '@nestjs/common';
 
 import { ContactsService } from './contacts.service.js';
-import { CreateContactDto } from '../dtos/create-contact.dto.js';
-import { UpdateContactDto } from '../dtos/update-contact.dto.js';
-import { GetAllContactsDto } from '../dtos/get-all-contacts.dto.js';
+import { CreateContactDto } from './dto/create-contact.dto.js';
+import { UpdateContactDto } from './dto/update-contact.dto.js';
+import { GetAllContactsDto } from './dto/get-all-contacts.dto.js';
 
 @Controller('contacts')
 export class ContactsController {

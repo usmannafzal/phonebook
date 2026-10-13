@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from './entities/contact.entity.js';
 import { ILike, Repository } from 'typeorm';
-import { CreateContactDto } from '../dtos/create-contact.dto.js';
-import { UpdateContactDto } from '../dtos/update-contact.dto.js';
-import { GetAllContactsDto } from '../dtos/get-all-contacts.dto.js';
+import { CreateContactDto } from './dto/create-contact.dto.js';
+import { UpdateContactDto } from './dto/update-contact.dto.js';
+import { GetAllContactsDto } from './dto/get-all-contacts.dto.js';
 
 @Injectable()
 export class ContactsService {
