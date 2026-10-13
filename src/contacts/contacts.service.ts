@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from './entities/contact.entity.js';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateContactDto } from '../dtos/create-contact.cto.js';
 import { UpdateContactDto } from '../dtos/update-contact.dto.js';
 import { GetAllContactsDto } from '../dtos/get-all-contacts.dto.js';
@@ -30,14 +30,20 @@ export class ContactsService {
 
   async getAll(query: GetAllContactsDto) {
     const limit = 10;
-    const { page } = query;
+    const { page, lastName } = query;
 
-    if (!page) return this.repo.find();
+    const search = lastName?.trim();
+    const where = search
+      ? { lastName: ILike(`%${search.replace(/[\\%_]/g, '\\$&')}%`) }
+      : undefined;
+
+    if (!page) return this.repo.find({ where });
 
     const pageNumber = Math.max(1, Number(page));
     const pageSize = Math.min(100, Math.max(1, Number(limit) || 10));
 
     const [contacts, total] = await this.repo.findAndCount({
+      where,
       skip: (pageNumber - 1) * pageSize,
       take: pageSize,
     });

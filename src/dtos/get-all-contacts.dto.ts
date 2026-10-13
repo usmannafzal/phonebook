@@ -4,4 +4,8 @@ export class GetAllContactsDto {
   @IsString()
   @IsOptional()
   page?: string;
+
+  @IsString()
+  @IsOptional()
+  lastName?: string;
 }
