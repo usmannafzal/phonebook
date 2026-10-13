@@ -5,6 +5,7 @@
 - Yarn is used as the package manager
 - Move `.env.example` to `.env` (see step 1)
 - The commit history is well defined
+- The `feature/phonebook_cruds` branch contains the full, detailed commit history from development
 - Proper error messages in the validations
 - US and Pakistani phone numbers are allowed
 - Offset pagination added
