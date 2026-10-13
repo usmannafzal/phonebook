@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getDatabaseConfig } from './database/database.config.js';
@@ -18,7 +16,7 @@ import { Contact } from './contacts/entities/contact.entity.js';
     }),
     TypeOrmModule.forFeature([Contact]),
   ],
-  controllers: [AppController, ContactsController],
-  providers: [AppService, ContactsService],
+  controllers: [ContactsController],
+  providers: [ContactsService],
 })
 export class AppModule {}
