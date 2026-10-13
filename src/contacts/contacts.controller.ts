@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 
 import { ContactsService } from './contacts.service.js';
-import { CreateContactDto } from '../dtos/create-contact.cto.js';
+import { CreateContactDto } from '../dtos/create-contact.dto.js';
 import { UpdateContactDto } from '../dtos/update-contact.dto.js';
 import { GetAllContactsDto } from '../dtos/get-all-contacts.dto.js';
 

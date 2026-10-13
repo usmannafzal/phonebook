@@ -1,5 +1,3 @@
-// Simple inline SVG icons so we don't need an icon library.
-
 export function BookIcon() {
   return (
     <svg width="26" height="26" viewBox="0 0 24 24" fill="#212121">

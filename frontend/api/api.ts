@@ -13,28 +13,23 @@ client.interceptors.response.use(
 );
 
 export class API {
-  static async getContacts(page?: number, lastName?: string) {
-    const res = await client.get('/contacts', { params: { page, lastName } });
-    return res;
+  static getContacts(page?: number, lastName?: string) {
+    return client.get('/contacts', { params: { page, lastName } });
   }
 
-  static async getContact(id: number) {
-    const res = await client.get(`/contacts/${id}`);
-    return res;
+  static getContact(id: number) {
+    return client.get(`/contacts/${id}`);
   }
 
-  static async createContact(contact: object) {
-    const res = await client.post('/contacts', contact);
-    return res;
+  static createContact(contact: object) {
+    return client.post('/contacts', contact);
   }
 
-  static async updateContact(id: number, contact: object) {
-    const res = await client.patch(`/contacts/${id}`, contact);
-    return res;
+  static updateContact(id: number, contact: object) {
+    return client.patch(`/contacts/${id}`, contact);
   }
 
-  static async deleteContact(id: number) {
-    const res = await client.delete(`/contacts/${id}`);
-    return res;
+  static deleteContact(id: number) {
+    return client.delete(`/contacts/${id}`);
   }
 }

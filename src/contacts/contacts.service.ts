@@ -1,12 +1,8 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from './entities/contact.entity.js';
 import { ILike, Repository } from 'typeorm';
-import { CreateContactDto } from '../dtos/create-contact.cto.js';
+import { CreateContactDto } from '../dtos/create-contact.dto.js';
 import { UpdateContactDto } from '../dtos/update-contact.dto.js';
 import { GetAllContactsDto } from '../dtos/get-all-contacts.dto.js';
 
@@ -34,13 +30,12 @@ export class ContactsService {
 
     const search = lastName?.trim();
     const where = search ? { lastName: ILike(`%${search}%`) } : {};
-    const order = { createdAt: 'DESC' } as const;
 
-    if (!page) return this.repo.find({ where, order });
+    if (!page) return this.repo.find({ where, order: { createdAt: 'DESC' } });
 
     const [contacts, total] = await this.repo.findAndCount({
       where,
-      order,
+      order: { createdAt: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });
@@ -56,7 +51,7 @@ export class ContactsService {
     };
   }
 
-  async findContact(id: number) {
+  findContact(id: number) {
     return this.findById(id);
   }
 
@@ -72,6 +67,6 @@ export class ContactsService {
 
     this.repo.merge(contact, body);
 
-    return await this.repo.save(contact);
+    return this.repo.save(contact);
   }
 }

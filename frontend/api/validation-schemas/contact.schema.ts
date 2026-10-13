@@ -1,7 +1,6 @@
 import * as Yup from 'yup';
 
-const phoneRegex =
-  /^(?:\+1[2-9]\d{2}[2-9]\d{6}|\+92[1-9]\d{8,9}|0\d{9,10}|[2-9]\d{9})$/;
+import { normalizePhone, PHONE_MESSAGE, PHONE_REGEX } from '@/utils/phone';
 
 export const validationSchema = Yup.object({
   firstName: Yup.string()
@@ -13,9 +12,7 @@ export const validationSchema = Yup.object({
     .min(3, 'Last name must be at least 3 characters')
     .max(50, 'Last name cannot exceed 50 characters'),
   phoneNumber: Yup.string()
+    .transform((value) => value && normalizePhone(value))
     .required('Phone number is mandatory')
-    .matches(
-      phoneRegex,
-      'Phone number must be a valid US or Pakistani phone number',
-    ),
+    .matches(PHONE_REGEX, PHONE_MESSAGE),
 });

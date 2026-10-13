@@ -1,5 +1,6 @@
 import { Contact } from "@/data/contacts";
 import { PencilIcon, PhoneIcon, TrashIcon } from "./Icons";
+import { formatPhone } from "@/utils/phone";
 
 type Props = {
   contacts: Contact[];
@@ -29,7 +30,7 @@ export default function ContactList({ contacts, onEdit, onDelete }: Props) {
             </p>
             <p className="flex items-center gap-1 text-[10px] font-bold text-[#a6a6a6]">
               <PhoneIcon />
-              {contact.phoneNumber}
+              {formatPhone(contact.phoneNumber)}
             </p>
           </div>
 

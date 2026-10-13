@@ -2,10 +2,10 @@ import { useFormik } from 'formik';
 import { Contact } from '@/data/contacts';
 import { validationSchema } from '@/api/validation-schemas/contact.schema';
 
-interface Props {
+type Props = {
   contact: Contact | null;
   onSave: (contact: Contact) => void;
-}
+};
 
 export default function useContactModal({ contact, onSave }: Props) {
   const formik = useFormik({

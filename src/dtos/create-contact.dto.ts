@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -5,6 +6,11 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import {
+  normalizePhone,
+  PHONE_MESSAGE,
+  PHONE_REGEX,
+} from '../contacts/phone.js';
 
 export class CreateContactDto {
   @IsString({ message: 'First name must be a string' })
@@ -19,13 +25,11 @@ export class CreateContactDto {
   @MaxLength(50, { message: 'Last name cannot exceed 50 characters' })
   lastName: string;
 
+  @Transform(({ value }) =>
+    typeof value === 'string' ? normalizePhone(value) : value,
+  )
   @IsString({ message: 'Phone number must be a string' })
   @IsNotEmpty({ message: 'Phone number is mandatory' })
-  @Matches(
-    /^(?:\+1[2-9]\d{2}[2-9]\d{6}|\+92[1-9]\d{8,9}|0\d{9,10}|[2-9]\d{9})$/,
-    {
-      message: 'Phone number must be a valid US or Pakistani phone number',
-    },
-  )
+  @Matches(PHONE_REGEX, { message: PHONE_MESSAGE })
   phoneNumber: string;
 }

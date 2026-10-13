@@ -1,15 +1,8 @@
 import { Client } from 'pg';
-import dataSource from './data-source.js';
+import { dbOptions } from './data-source.js';
 
 async function createDatabase() {
-  const { host, port, username, password, database } =
-    dataSource.options as unknown as {
-      host: string;
-      port: number;
-      username: string;
-      password: string;
-      database: string;
-    };
+  const { host, port, username, password, database } = dbOptions;
 
   const client = new Client({
     host,

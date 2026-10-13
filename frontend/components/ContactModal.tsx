@@ -43,7 +43,7 @@ export default function ContactModal({ contact, onSave, onClose }: Props) {
           value={form.phoneNumber}
           onChange={(value) => setField('phoneNumber', value)}
           error={errors.phoneNumber}
-          placeholder="2225556575"
+          placeholder="222-555-6575"
           className="mb-5"
         />
 

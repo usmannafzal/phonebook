@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import { API } from '@/api/api';
 import { Contact } from '@/data/contacts';
@@ -14,14 +14,6 @@ export default function useDashBoard() {
   });
   const { contacts, totalPages, search, page, showModal, editingContact } =
     state;
-
-  const fetchContacts = async () => {
-    const res = await API.getContacts(page, search);
-    setState((draft) => {
-      draft.contacts = res.data.data;
-      draft.totalPages = res.data.pagination.totalPages;
-    });
-  };
 
   function showError(error: unknown) {
     if (error instanceof Error) alert(error.message);
@@ -93,8 +85,16 @@ export default function useDashBoard() {
   }
 
   useEffect(() => {
+    async function fetchContacts() {
+      const res = await API.getContacts(page, search);
+      setState((draft) => {
+        draft.contacts = res.data.data;
+        draft.totalPages = res.data.pagination.totalPages;
+      });
+    }
+
     fetchContacts();
-  }, [fetchContacts]);
+  }, [page, search, setState]);
 
   return {
     contacts,
