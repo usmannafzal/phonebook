@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useImmer } from 'use-immer';
-import { API } from '@/app/api/api';
+import { API } from '@/api/api';
 import { Contact } from '@/data/contacts';
 
 export default function useDashBoard() {
@@ -49,7 +49,7 @@ export default function useDashBoard() {
       draft.showModal = false;
       const existing = draft.contacts.find((c) => c.id === id);
       if (existing) Object.assign(existing, data);
-      else draft.contacts.push({ id: tempId, ...data });
+      else draft.contacts.unshift({ id: tempId, ...data });
     });
 
     try {

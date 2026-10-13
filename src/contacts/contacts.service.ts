@@ -34,11 +34,13 @@ export class ContactsService {
 
     const search = lastName?.trim();
     const where = search ? { lastName: ILike(`%${search}%`) } : {};
+    const order = { createdAt: 'DESC' } as const;
 
-    if (!page) return this.repo.find({ where });
+    if (!page) return this.repo.find({ where, order });
 
     const [contacts, total] = await this.repo.findAndCount({
       where,
+      order,
       skip: (page - 1) * limit,
       take: limit,
     });
