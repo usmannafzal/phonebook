@@ -1,5 +1,6 @@
+import { useFormik } from 'formik';
 import { Contact } from '@/data/contacts';
-import { useImmer } from 'use-immer';
+import { validationSchema } from '@/api/validation-schemas/contact.schema';
 
 interface Props {
   contact: Contact | null;
@@ -7,21 +8,22 @@ interface Props {
 }
 
 export default function useContactModal({ contact, onSave }: Props) {
-  const [form, setForm] = useImmer({
-    firstName: contact?.firstName || '',
-    lastName: contact?.lastName || '',
-    phoneNumber: contact?.phoneNumber || '',
+  const formik = useFormik({
+    initialValues: {
+      firstName: contact?.firstName || '',
+      lastName: contact?.lastName || '',
+      phoneNumber: contact?.phoneNumber || '',
+    },
+    validationSchema,
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: (values) => onSave({ id: contact?.id || 0, ...values }),
   });
 
-  function setField(field: keyof typeof form, value: string) {
-    setForm((draft) => {
-      draft[field] = value;
-    });
-  }
-
-  function handleSubmit(e: any) {
-    e.preventDefault();
-    onSave({ id: contact?.id || 0, ...form });
-  }
-  return { form, setField, handleSubmit };
+  return {
+    form: formik.values,
+    errors: formik.errors,
+    setField: formik.setFieldValue,
+    handleSubmit: formik.handleSubmit,
+  };
 }

@@ -5,6 +5,7 @@ type Props = {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  error?: string;
   placeholder?: string;
   className?: string;
 };
@@ -13,6 +14,7 @@ export default function FormField({
   label,
   value,
   onChange,
+  error,
   placeholder,
   className = 'mb-3',
 }: Props) {
@@ -24,8 +26,8 @@ export default function FormField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        required
       />
+      {error && <p className="mt-1 text-[11px] text-[#bc4e4e]">{error}</p>}
     </div>
   );
 }
