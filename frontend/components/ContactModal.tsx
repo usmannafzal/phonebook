@@ -1,11 +1,8 @@
 'use client';
 
-import { useImmer } from 'use-immer';
 import { Contact } from '@/data/contacts';
+import FormField from '@/components/FormField';
 import useContactModal from '@/hooks/useContactModal';
-
-const inputClass =
-  'w-full h-8 px-2 text-sm bg-white border border-[#e0e2e5] rounded-[3px] outline-none';
 
 type Props = {
   contact: Contact | null;
@@ -14,7 +11,7 @@ type Props = {
 };
 
 export default function ContactModal({ contact, onSave, onClose }: Props) {
-  const { form, setForm, handleSubmit } = useContactModal({ contact, onSave });
+  const { form, setField, handleSubmit } = useContactModal({ contact, onSave });
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center px-4">
       <form
@@ -25,41 +22,22 @@ export default function ContactModal({ contact, onSave, onClose }: Props) {
           {contact ? 'Edit Contact' : 'Add Contact'}
         </h2>
 
-        <label className="block text-xs mb-1">First Name</label>
-        <input
-          className={`${inputClass} mb-3`}
+        <FormField
+          label="First Name"
           value={form.firstName}
-          onChange={(e) =>
-            setForm((draft) => {
-              draft.firstName = e.target.value;
-            })
-          }
-          required
+          onChange={(value) => setField('firstName', value)}
         />
-
-        <label className="block text-xs mb-1">Last Name</label>
-        <input
-          className={`${inputClass} mb-3`}
+        <FormField
+          label="Last Name"
           value={form.lastName}
-          onChange={(e) =>
-            setForm((draft) => {
-              draft.lastName = e.target.value;
-            })
-          }
-          required
+          onChange={(value) => setField('lastName', value)}
         />
-
-        <label className="block text-xs mb-1">Phone Number</label>
-        <input
-          className={`${inputClass} mb-5`}
+        <FormField
+          label="Phone Number"
           value={form.phone}
-          onChange={(e) =>
-            setForm((draft) => {
-              draft.phone = e.target.value;
-            })
-          }
+          onChange={(value) => setField('phone', value)}
           placeholder="222-555-6575"
-          required
+          className="mb-5"
         />
 
         <div className="flex justify-end gap-2">

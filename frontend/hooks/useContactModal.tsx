@@ -13,9 +13,15 @@ export default function useContactModal({ contact, onSave }: Props) {
     phone: contact?.phone || '',
   });
 
+  function setField(field: keyof typeof form, value: string) {
+    setForm((draft) => {
+      draft[field] = value;
+    });
+  }
+
   function handleSubmit(e: any) {
     e.preventDefault();
     onSave({ id: contact?.id || 0, ...form });
   }
-  return { form, setForm, handleSubmit };
+  return { form, setField, handleSubmit };
 }
