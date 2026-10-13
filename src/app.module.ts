@@ -5,6 +5,8 @@ import { PhonebookModule } from './phonebook/phonebook.module.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getDatabaseConfig } from './database/database.config.js';
+import { ContactsController } from './contacts/contacts.controller.js';
+import { ContactsService } from './contacts/contacts.service.js';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { getDatabaseConfig } from './database/database.config.js';
     }),
     PhonebookModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ContactsController],
+  providers: [AppService, ContactsService],
 })
 export class AppModule {}
