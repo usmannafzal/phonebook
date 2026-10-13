@@ -48,46 +48,29 @@ export default function useDashBoard() {
   }
 
   async function handleSave({ id, ...data }: Contact) {
-    const previous = contacts;
-    const tempId = -Date.now();
-
-    setState((draft) => {
-      draft.showModal = false;
-      const existing = draft.contacts.find((c) => c.id === id);
-      if (existing) Object.assign(existing, data);
-      else draft.contacts.unshift({ id: tempId, ...data });
-    });
-
     try {
-      const res = id
-        ? await API.updateContact(id, data)
-        : await API.createContact(data);
+      if (id) await API.updateContact(id, data);
+      else await API.createContact(data);
+
       setState((draft) => {
-        const index = draft.contacts.findIndex((c) => c.id === (id || tempId));
-        draft.contacts[index] = res.data;
+        draft.showModal = false;
+        if (!id) draft.page = 1;
+        draft.reload += 1;
       });
     } catch (error) {
-      setState((draft) => {
-        draft.contacts = previous;
-      });
       showError(error);
     }
   }
 
   async function handleDelete(id: number) {
-    const previous = contacts;
-
-    setState((draft) => {
-      draft.contacts = draft.contacts.filter((c) => c.id !== id);
-    });
-
     try {
       await API.deleteContact(id);
-      if (previous.length === 1 && page > 1) setPage(page - 1);
-    } catch (error) {
+
       setState((draft) => {
-        draft.contacts = previous;
+        if (contacts.length === 1 && page > 1) draft.page = page - 1;
+        draft.reload += 1;
       });
+    } catch (error) {
       showError(error);
     }
   }
