@@ -1,144 +1,115 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Phone Book App
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Important Notes
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- Yarn is used as the package manager
+- Move `.env.example` to `.env` (see step 1)
+- The commit history is well defined
+- Proper error messages in the validations
+- US and Pakistani phone numbers are allowed
+- Offset pagination added
+- Data seeders written using AI
 
-## Description
+## About
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A phone book CRUD app built with Next.js (frontend), NestJS (backend) and PostgreSQL.
 
-## Project setup
+- `/` holds the NestJS API
+- `/frontend` holds the Next.js app
 
-```bash
-$ yarn install
-```
+## Prerequisites
 
-## Database setup
+- Node.js 22
+- Yarn 4 (this project uses **Yarn** as the package manager, enable it with `corepack enable`)
+- Docker Desktop (for the Docker setup), or PostgreSQL running locally (for the local setup)
 
-Requires a running PostgreSQL server. Copy `.env.example` to `.env` and fill in the values (at least `DB_PASSWORD`), then run `yarn db:setup`, which also creates the database named in `DB_DATABASE` if it doesn't exist.
+## 1. Create the .env files
 
-The schema is managed by migrations (`synchronize` is off).
+Copy each `.env.example` to `.env`:
 
 ```bash
-# create the database, tables and demo contacts in one go
-$ yarn db:setup
-
-# or step by step
-$ yarn db:create        # create the database if missing
-$ yarn migration:run     # apply pending migrations
-$ yarn seed              # insert demo contacts (safe to re-run)
-$ yarn migration:show    # list applied / pending migrations
-$ yarn migration:revert  # undo the last migration
+cp .env.example .env
+cp frontend/.env.example frontend/.env
 ```
 
-These commands build the project first, because the TypeORM CLI runs against `dist/`. To add a migration, create a file in `src/database/migrations/` named `<timestamp>-<Name>.ts`.
+Root `.env`:
 
-## Compile and run the project
+| Variable | Default | Used for |
+|---|---|---|
+| `PORT` | `3001` | API port |
+| `DB_HOST` | `localhost` | Postgres host (Docker uses `db`) |
+| `DB_PORT` | `5432` | Postgres port |
+| `DB_USERNAME` | `postgres` | Postgres user |
+| `DB_PASSWORD` | `postgres` | Postgres password |
+| `DB_DATABASE` | `phonebook_usman_afzal` | Database name |
+| `PGADMIN_EMAIL` | `admin@phonebook.com` | pgAdmin login (Docker only) |
+| `PGADMIN_PASSWORD` | `admin` | pgAdmin password (Docker only) |
+
+`frontend/.env`:
+
+| Variable | Default | Used for |
+|---|---|---|
+| `API_URL` | `http://localhost:3001` | Where the Next.js app forwards `/api` calls |
+
+## 2a. Run with Docker (recommended)
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+docker compose up --build
 ```
 
-## Run tests
+This starts four containers:
+
+| Service | URL | Notes |
+|---|---|---|
+| frontend | http://localhost:3000 | The phone book UI |
+| pgadmin | http://localhost:5050 | Add a server with host `db` and the DB user and password from `.env` |
+| backend | not exposed | Runs migrations and seeders on start, then the API |
+| db | not exposed | PostgreSQL 17 with a persistent volume |
+
+The backend and database only live on a private Docker network. The browser talks to the frontend, and the frontend forwards `/api` calls to the backend over that network.
+
+Stop it with `Ctrl+C` or `docker compose down`. Use `docker compose down -v` to also delete the database.
+
+## 2b. Run locally
+
+Backend, from the project root:
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+yarn install
+yarn db:setup
+yarn start:dev
 ```
 
-## Deployment
+`yarn db:setup` creates the database, runs the migrations and seeds the demo contacts. The API runs on http://localhost:3001.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Frontend, in a second terminal:
 
 ```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
+cd frontend
+yarn install
+yarn dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Open http://localhost:3000.
 
-## Observability
-
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
-
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
-
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
-
-To add it to this project:
+## Database scripts
 
 ```bash
-$ yarn install @nestjs/observe
+yarn db:create          # create the database if it doesn't exist
+yarn migration:run      # apply pending migrations
+yarn migration:revert   # undo the last migration
+yarn migration:show     # list applied and pending migrations
+yarn seed               # insert demo contacts (safe to re-run)
 ```
 
-Then follow the [setup guide](https://docs.nestjs.com/observability/overview) - it takes a single import and an app key.
+## API
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+| Method | Route | Description |
+|---|---|---|
+| GET | `/contacts?page=1&lastName=smi` | List contacts, 5 per page, optional search by last name |
+| GET | `/contacts/:id` | Get one contact |
+| POST | `/contacts` | Create a contact |
+| PATCH | `/contacts/:id` | Update a contact |
+| DELETE | `/contacts/:id` | Delete a contact |
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Invalid input returns `400` and an unknown id returns `404`.
