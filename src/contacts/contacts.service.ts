@@ -32,7 +32,7 @@ export class ContactsService {
     const { page, lastName } = query;
     const limit = 10;
 
-    const search = lastName?.trim().replace(/[\\%_]/g, '\\$&');
+    const search = lastName?.trim();
     const where = search ? { lastName: ILike(`%${search}%`) } : {};
 
     if (!page) return this.repo.find({ where });
