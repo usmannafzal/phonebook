@@ -34,9 +34,9 @@ export default function ContactModal({ contact, onSave, onClose }: Props) {
         />
         <FormField
           label="Phone Number"
-          value={form.phone}
-          onChange={(value) => setField('phone', value)}
-          placeholder="222-555-6575"
+          value={form.phoneNumber}
+          onChange={(value) => setField('phoneNumber', value)}
+          placeholder="2225556575"
           className="mb-5"
         />
 

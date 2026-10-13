@@ -8,7 +8,7 @@ import useDashBoard from '@/hooks/useDashboard';
 
 export default function Home() {
   const {
-    visible,
+    contacts,
     search,
     page,
     showModal,
@@ -55,7 +55,7 @@ export default function Home() {
       </div>
 
       <ContactList
-        contacts={visible}
+        contacts={contacts}
         onEdit={openEdit}
         onDelete={handleDelete}
       />

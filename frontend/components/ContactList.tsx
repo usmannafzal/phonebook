@@ -29,7 +29,7 @@ export default function ContactList({ contacts, onEdit, onDelete }: Props) {
             </p>
             <p className="flex items-center gap-1 text-[10px] font-bold text-[#a6a6a6]">
               <PhoneIcon />
-              {contact.phone}
+              {contact.phoneNumber}
             </p>
           </div>
 

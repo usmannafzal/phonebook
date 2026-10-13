@@ -10,7 +10,7 @@ export default function useContactModal({ contact, onSave }: Props) {
   const [form, setForm] = useImmer({
     firstName: contact?.firstName || '',
     lastName: contact?.lastName || '',
-    phone: contact?.phone || '',
+    phoneNumber: contact?.phoneNumber || '',
   });
 
   function setField(field: keyof typeof form, value: string) {
